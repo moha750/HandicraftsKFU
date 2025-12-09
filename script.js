@@ -634,31 +634,27 @@ downloadBtn.addEventListener('click', () => {
       console.error('Background upload failed:', err);
     });
 
-    // التنزيل المباشر على جميع الأنظمة
+    // تنزيل مباشر على جميع الأنظمة
     try {
-      // إنشاء رابط التنزيل
-      const url = URL.createObjectURL(blob);
+      // إنشاء Blob بنوع octet-stream لإجبار التنزيل
+      const downloadBlob = new Blob([blob], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(downloadBlob);
       
-      // إنشاء عنصر <a> للتنزيل
       const a = document.createElement('a');
       a.href = url;
       a.download = filename;
+      a.style.display = 'none';
       
-      // إضافة العنصر للصفحة
       document.body.appendChild(a);
-      
-      // محاكاة النقر لبدء التنزيل
-      // هذا سيفتح نافذة "هل تريد تنزيل هذا الملف؟" على معظم المتصفحات
       a.click();
       
       // تنظيف
       setTimeout(() => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-      }, 100);
+      }, 150);
       
-      setStatus('✅ جاري تنزيل الصورة...');
-      
+      setStatus('✅ تم تنزيل الصورة بنجاح!');
     } catch (err) {
       console.error('Download failed:', err);
       setStatus('❌ فشل التنزيل، حاول مرة أخرى');
