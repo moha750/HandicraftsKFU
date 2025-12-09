@@ -634,9 +634,31 @@ downloadBtn.addEventListener('click', () => {
       console.error('Background upload failed:', err);
     });
 
-    // تنزيل مباشر على جميع الأنظمة
+    // التحقق من نوع الجهاز
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    
+    // iOS: استخدام نافذة المشاركة
+    if (isIOS && navigator.canShare) {
+      try {
+        const file = new File([blob], filename, { type: 'image/png' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: 'ملتقى الحرف اليدوية',
+            text: 'أنا أدعم الحرف اليدوية'
+          });
+          setStatus('✅ تم الحفظ بنجاح!');
+          return;
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.log('Share failed:', err);
+        }
+      }
+    }
+    
+    // Android والكمبيوتر: تنزيل مباشر
     try {
-      // إنشاء Blob بنوع octet-stream لإجبار التنزيل
       const downloadBlob = new Blob([blob], { type: 'application/octet-stream' });
       const url = URL.createObjectURL(downloadBlob);
       
@@ -648,7 +670,6 @@ downloadBtn.addEventListener('click', () => {
       document.body.appendChild(a);
       a.click();
       
-      // تنظيف
       setTimeout(() => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
