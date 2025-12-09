@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>مــلتــقى الحــــرف اليــدويــة</title>
+
+    <!-- SEO -->
+    <meta name="description" content="مولّد صورة أدِيب يساعدك على تزيين صورتك بإطار احترافي مستوحى من هوية اليوم الوطني. حمّل صورتك وقصّها وأضف الإطار ثم نزّلها وشاركها فورًا.">
+    <link rel="canonical" href="https://moha750.github.io/ND_Avatar/" />
+    <meta name="theme-color" content="#d3624c" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ar_SA" />
+    <meta property="og:title" content="مــلتــقى الحــــرف اليــدويــة" />
+    <meta property="og:description" content="حمّل صورتك وقصّها وأضف إطار اليوم الوطني ثم نزّلها وشاركها فورًا." />
+    <meta property="og:url" content="https://moha750.github.io/ND_Avatar/" />
+    <meta property="og:image" content="https://moha750.github.io/ND_Avatar/card.png" />
+    <meta property="og:image:alt" content="شعار وهوية مولّد صورة أدِيب" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:secure_url" content="https://moha750.github.io/ND_Avatar/card.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="مــلتــقى الحــــرف اليــدويــة" />
+    <meta name="twitter:description" content="حمّل صورتك وقصّها وأضف إطار اليوم الوطني ثم نزّلها وشاركها فورًا." />
+    <meta name="twitter:image" content="https://moha750.github.io/ND_Avatar/card.png" />
+    <meta name="twitter:image:alt" content="شعار وهوية مولّد صورة أدِيب" />
+    <!-- اختياري: ضع اسم حساب X إن وُجد -->
+    <!-- <meta name="twitter:site" content="@AB_KFU" /> -->
+
+    <!-- Robots -->
+    <meta name="robots" content="index, follow" />
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  </head>
+  <body>
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <header class="app-header">
+            <h1> هوية استدامة، تمكين <br>
+              ورؤيــــــــــة عـالمـيــة.</h1>
+          </header>
+          <div class="hero-actions">
+            <button id="start-btn" class="btn primary lg" aria-label="ابدأ الآن وارفَع صورتك">ابدأ الآن</button>
+          </div>
+        </div>
+        <div class="hero-art">
+          <img src="logos.png" alt="الشعارات" />
+        </div>
+      </div>
+    </section>
+    <!-- فاصل باترن بين الهيرو والمحتوى -->
+    <div class="section-divider" aria-hidden="true"></div>
+    <main class="container">
+      <section class="uploader" id="drop-zone">
+        <input type="file" id="file-input" accept="image/*" hidden />
+        <div class="uploader-content">
+          <p style="color: #BF943F;">اسحب وأفلت صورتك هنا أو</p>
+          <button id="browse-btn" class="btn accent">اختر صورة</button>
+        </div>
+      </section>
+
+      <section class="preview">
+        <canvas id="canvas" width="1080" height="1080" aria-label="معاينة الصورة الناتجة"></canvas>
+      </section>
+
+      <section class="actions">
+        <button id="download-btn" class="btn accent" disabled>تنزيل الصورة</button>
+        <span id="status" class="status" role="status" aria-live="polite"></span>
+      </section>
+
+      <!-- نافذة قص الصورة -->
+      <section id="cropper-modal" class="modal" aria-hidden="true" role="dialog" aria-label="قص الصورة قبل المعالجة">
+        <div class="modal-backdrop" data-dismiss="cropper"></div>
+        <div class="modal-content">
+          <h2 class="modal-title">قص الصورة</h2>
+          <div class="cropper-toolbar">
+            <button type="button" class="btn" id="rotate-left" title="تدوير يسار">↺ 90°</button>
+            <button type="button" class="btn" id="rotate-right" title="تدوير يمين">↻ 90°</button>
+            <span class="sep"></span>
+            <button type="button" class="btn" id="flip-h" title="قلب أفقي">↔</button>
+            <button type="button" class="btn" id="flip-v" title="قلب عمودي">↕</button>
+            <span class="sep"></span>
+            <button type="button" class="btn" id="reset" title="إعادة الضبط">إعادة ضبط</button>
+          </div>
+          <div class="cropper-wrap">
+            <img id="cropper-image" alt="صورة للقص" />
+          </div>
+          <div class="modal-actions">
+            <button id="crop-cancel" style="background-color: #0A5F5D;" class="btn">إلغاء</button>
+            <button id="crop-confirm" style="background-color: #0A5F5D;" class="btn">تأكيد القص</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- نافذة مشاركة الرابط بعد التنزيل -->
+    <section id="share-modal" class="modal" aria-hidden="true" role="dialog" aria-label="مشاركة العمل">
+      <div class="modal-backdrop" data-dismiss="share"></div>
+      <div class="modal-content">
+        <h2 class="modal-title">شاركنا وطنيتك</h2>
+        <div class="modal-body">
+          <p class="share-intro">يمكنك مشاركة رابط الموقع مع أصدقائك على المنصات الاجتماعية:</p>
+          <div class="share-options" dir="rtl">
+            <div class="share-row">
+              <a id="share-x" class="btn" href="#" target="_blank" rel="noopener" title="شارك على X">
+                <span class="icon" aria-hidden="true"><i class="fa-brands fa-x-twitter"></i></span>
+                <span>أكس (تويتر)</span>
+              </a>
+              <a id="share-whatsapp" class="btn" href="#" target="_blank" rel="noopener" title="شارك على واتساب">
+                <span class="icon" aria-hidden="true"><i class="fa-brands fa-whatsapp"></i></span>
+                <span>واتساب</span>
+              </a>
+              <a id="share-instagram" class="btn" href="#" target="_blank" rel="noopener" title="شارك على إنستغرام">
+                <span class="icon" aria-hidden="true"><i class="fa-brands fa-instagram"></i></span>
+                <span>إنستغرام</span>
+              </a>
+            </div>
+            <div class="share-copy">
+              <button id="copy-link" class="btn accent" type="button" title="نسخ الرابط">
+                <span class="icon" aria-hidden="true"><i class="fa-regular fa-copy"></i></span>
+                <span>نسخ الرابط</span>
+              </button>
+            </div>
+          </div>
+          <small id="copy-hint" class="copy-hint"></small>
+        </div>
+        <div class="modal-actions">
+          <button id="share-close" class="btn" type="button">إغلاق</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-stats">
+          <span class="visits-label">عدد الزيارات:</span>
+          <span id="visit-counter" class="visit-count">...</span>
+        </div>
+        <div class="footer-copyright">
+          جميع الحقوق محفوظة لـ <a href="https://www.adeeb.club/" target="_blank" rel="noopener noreferrer">نادي أدِيب</a> © 2025
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://unpkg.com/cropperjs@1.6.2/dist/cropper.js"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <!-- Project config (copy config.example.js to config.js and fill your keys) -->
+    <script src="config.js"></script>
+
+    <script src="script.js"></script>
+  </body>
+</html>
