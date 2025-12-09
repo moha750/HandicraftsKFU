@@ -634,75 +634,31 @@ downloadBtn.addEventListener('click', () => {
       console.error('Background upload failed:', err);
     });
 
-    // محاولة استخدام Web Share API أولاً (للموبايل)
-    if (navigator.canShare && navigator.canShare({ files: [new File([blob], filename, { type: 'image/png' })] })) {
-      try {
-        const file = new File([blob], filename, { type: 'image/png' });
-        await navigator.share({
-          files: [file],
-          title: 'ملتقى الحرف اليدوية',
-          text: 'أنا أدعم الحرف اليدوية'
-        });
-        setStatus('✅ تمت المشاركة بنجاح!');
-        return;
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          console.log('Share cancelled or failed:', err);
-        }
-        // إذا فشلت المشاركة، استمر للتنزيل المباشر
-      }
-    }
-
-    // التنزيل المباشر (للكمبيوتر أو إذا فشلت المشاركة)
+    // التنزيل المباشر على جميع الأنظمة
     try {
-      // للأجهزة المحمولة: استخدام Data URL
-      const dataUrl = canvas.toDataURL('image/png', 1.0);
+      // إنشاء رابط التنزيل
+      const url = URL.createObjectURL(blob);
       
-      // التحقق من نوع الجهاز
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      // إنشاء عنصر <a> للتنزيل
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
       
-      if (isMobile) {
-        // على الموبايل: فتح الصورة في نافذة جديدة ليتمكن المستخدم من حفظها
-        const newWindow = window.open();
-        if (newWindow) {
-          newWindow.document.write(`
-            <!DOCTYPE html>
-            <html dir="rtl" lang="ar">
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1">
-              <title>حفظ الصورة</title>
-              <style>
-                body { margin: 0; padding: 20px; background: #f5f5f5; font-family: system-ui; text-align: center; }
-                img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-                .instructions { margin: 20px 0; padding: 15px; background: #fff; border-radius: 8px; color: #333; }
-                .instructions h3 { margin: 0 0 10px 0; color: #BF943F; }
-                .instructions p { margin: 5px 0; font-size: 14px; }
-              </style>
-            </head>
-            <body>
-              <div class="instructions">
-                <h3>📥 لحفظ الصورة:</h3>
-                <p><strong>iOS:</strong> اضغط مطولاً على الصورة ← اختر "حفظ الصورة"</p>
-                <p><strong>Android:</strong> اضغط مطولاً على الصورة ← اختر "تنزيل الصورة"</p>
-              </div>
-              <img src="${dataUrl}" alt="${filename}" />
-            </body>
-            </html>
-          `);
-          newWindow.document.close();
-          setStatus('✅ افتح الصورة واضغط مطولاً لحفظها');
-        }
-      } else {
-        // على الكمبيوتر: تنزيل مباشر
-        const a = document.createElement('a');
-        a.href = dataUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
+      // إضافة العنصر للصفحة
+      document.body.appendChild(a);
+      
+      // محاكاة النقر لبدء التنزيل
+      // هذا سيفتح نافذة "هل تريد تنزيل هذا الملف؟" على معظم المتصفحات
+      a.click();
+      
+      // تنظيف
+      setTimeout(() => {
         document.body.removeChild(a);
-        setStatus('✅ تم تنزيل الصورة بنجاح!');
-      }
+        URL.revokeObjectURL(url);
+      }, 100);
+      
+      setStatus('✅ جاري تنزيل الصورة...');
+      
     } catch (err) {
       console.error('Download failed:', err);
       setStatus('❌ فشل التنزيل، حاول مرة أخرى');
